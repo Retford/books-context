@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { CardBooks } from './components/CardBooks';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
@@ -11,15 +11,17 @@ export const Books = () => {
     useContext(BooksContext);
   const [readingBooks, setReadingBooks] = useState([]);
 
-  const selectedBooks = books.filter((book) => {
-    if (
-      book.book.title.toLowerCase().includes(querySearch.toLowerCase()) &&
-      selectRange >= book.book.pages &&
-      (selectGenre === '' || book.book.genre === selectGenre)
-    )
-      return true;
-    return false;
-  });
+  const selectedBooks = useMemo(() => {
+    return books.filter((book) => {
+      if (
+        book.book.title.toLowerCase().includes(querySearch.toLowerCase()) &&
+        selectRange >= book.book.pages &&
+        (selectGenre === '' || book.book.genre === selectGenre)
+      )
+        return true;
+      return false;
+    });
+  }, [books, querySearch, selectGenre, selectRange]);
 
   const handleClickWish = (book) => {
     const bookExists = readingBooks.some(
