@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: CanvasText;
+  background-color: Canvas;
+  color-scheme: dark;
+  font-family: 'Sour Gummy', serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
