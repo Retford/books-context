@@ -1,10 +1,11 @@
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { CardBooks } from './components/CardBooks';
 import { Footer } from './components/Footer';
 import { Header } from './components/Header';
 import { Navbar } from './components/Navbar';
 import { ReadingList } from './components/ReadingList';
 import { BooksContext } from './context/BooksContext';
+import { api } from './api/api';
 
 export const Books = () => {
   const { books, selectGenre, selectRange, querySearch } =
@@ -23,21 +24,25 @@ export const Books = () => {
     });
   }, [books, querySearch, selectGenre, selectRange]);
 
+  // With some
   const handleClickWish = (book) => {
-    const bookExists = readingBooks.some(
-      (readingBook) => readingBook.book.ISBN === book.book.ISBN
-    );
+    const draft = readingBooks.some((readingBook) => readingBook === book)
+      ? readingBooks.filter((readingBook) => readingBook !== book)
+      : [...readingBooks, book];
 
-    if (bookExists) {
-      setReadingBooks(
-        readingBooks.filter(
-          (readingBook) => readingBook.book.ISBN !== book.book.ISBN
-        )
-      );
-    } else {
-      setReadingBooks([...readingBooks, book]);
-    }
+    setReadingBooks(draft);
+    api.readList.update(draft);
   };
+
+  // With includes
+  // const handleClickWish = (book) => {
+  //   const draft = readingBooks.includes(book)
+  //     ? readingBooks.filter((readingList) => readingList !== book)
+  //     : [...readingBooks, book];
+
+  //   setReadingBooks(draft);
+  //   localStorage.setItem('setReadingBooks', JSON.stringify(draft));
+  // };
 
   const availableBooks = selectedBooks.filter(
     (selectedBook) =>
@@ -50,6 +55,12 @@ export const Books = () => {
     numberAvailableBooks: availableBooks.length,
     numberReadingBooks: readingBooks.length,
   };
+
+  useEffect(() => {
+    const unsubscribe = api.readList.onChange(setReadingBooks);
+
+    return () => unsubscribe();
+  }, []);
 
   return (
     <>
