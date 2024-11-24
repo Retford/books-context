@@ -8,7 +8,7 @@ export const BooksProvider = ({ children }) => {
   const [selectRange, setSelectRange] = useState(1200);
   const [querySearch, setQuerySearch] = useState('');
 
-  const books = useFetch('/books-context/data/books.json');
+  const books = useFetch('/data/books.json');
 
   return (
     <BooksContext.Provider
